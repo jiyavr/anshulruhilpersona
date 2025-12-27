@@ -15,20 +15,29 @@ export default function Blog() {
   }, []);
 
   const fetchPosts = async () => {
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .order('published_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching posts:', error);
+    if (!supabase) {
+      console.warn('Supabase not initialized. Blog posts cannot be fetched.');
       return;
     }
 
-    if (data) {
-      setPosts(data);
-      const featured = data.find(post => post.featured);
-      if (featured) setFeaturedPost(featured);
+    try {
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .order('published_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching posts:', error);
+        return;
+      }
+
+      if (data) {
+        setPosts(data);
+        const featured = data.find(post => post.featured);
+        if (featured) setFeaturedPost(featured);
+      }
+    } catch (error) {
+      console.error('Error fetching posts:', error);
     }
   };
 

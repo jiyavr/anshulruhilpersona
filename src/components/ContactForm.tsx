@@ -13,6 +13,10 @@ export default function ContactForm() {
     setSubmitStatus('idle');
 
     try {
+      if (!supabase) {
+        throw new Error('Contact form is not available. Please configure Supabase.');
+      }
+
       const { error } = await supabase
         .from('contact_submissions')
         .insert([formData]);
